@@ -260,7 +260,7 @@ class _SubmittedScreenState extends State<SubmittedScreen> {
                     style: const TextStyle(
                       fontSize: 50.0,
                       fontWeight: FontWeight.w900,
-                      color: colorWhite,
+                      color: colorMaroon,
                       letterSpacing: 3.0,
                     ),
                   ),
