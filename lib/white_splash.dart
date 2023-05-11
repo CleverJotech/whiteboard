@@ -1,6 +1,7 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:whiteboard/main.dart';
 
 // class MyCustomWidget extends StatefulWidget {
 //   const MyCustomWidget({super.key});
@@ -98,8 +99,12 @@ class _WhiteSplashState extends State<WhiteSplash> {
       setState(() {
         Navigator.of(context).pushReplacement(
           ThisIsFadeRoute(
-            page: const BlackBoard(),
-            route: const BlackBoard(),
+            page: const MyHomePage(
+              title: 'White Board',
+            ),
+            route: const MyHomePage(
+              title: 'White Board',
+            ),
           ),
         );
       });
@@ -209,19 +214,4 @@ class ThisIsFadeRoute extends PageRouteBuilder {
             child: route,
           ),
         );
-}
-
-class BlackBoard extends StatelessWidget {
-  const BlackBoard({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Go Back'),
-        centerTitle: true,
-        backgroundColor: Colors.black,
-      ),
-    );
-  }
 }

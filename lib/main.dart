@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'dart:ui' as ui;
-
-import 'package:animations/animations.dart';
+import 'package:whiteboard/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:whiteboard/user_input.dart';
 import 'package:whiteboard/white_splash.dart';
@@ -19,10 +18,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'WhiteBoard',
-      theme: ThemeData(canvasColor: const Color.fromARGB(255, 254, 229, 227)),
-      home: const MyHomePage(
-        title: 'White Board',
-      ),
+      theme:
+          ThemeData(canvasColor: const ui.Color.fromARGB(255, 255, 255, 255)),
+      home: const WhiteSplash(),
     );
   }
 }
@@ -81,26 +79,28 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         ),
-        backgroundColor: Colors.amber[100],
+        backgroundColor: colorMaroon,
       ),
-      body: Column(
-        children: [
-          Center(
-            child: Transform.rotate(
-              angle: -pi / 2,
-              child: ClipRect(
-                child: BackdropFilter(
-                  filter: ui.ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-                  child: SubmittedScreen(submittedText: _text),
+      body: ListView(children: [
+        Column(
+          children: [
+            Center(
+              child: Transform.rotate(
+                angle: -pi / 2,
+                child: ClipRect(
+                  child: BackdropFilter(
+                    filter: ui.ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                    child: SubmittedScreen(submittedText: _text),
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
+      ]),
       bottomNavigationBar: BottomAppBar(
         elevation: 50,
-        color: const Color.fromARGB(255, 255, 236, 179),
+        color: colorMaroon,
         child: InkWell(
           onTap: () {
             setState(() {});
