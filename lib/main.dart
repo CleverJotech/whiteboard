@@ -18,8 +18,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'WhiteBoard',
-      theme:
-          ThemeData(canvasColor: const ui.Color.fromARGB(255, 255, 255, 255)),
+      theme: ThemeData(canvasColor: colorWhite),
       home: const WhiteSplash(),
     );
   }
@@ -124,13 +123,22 @@ class _MyHomePageState extends State<MyHomePage> {
                           focusNode: myFocus,
                           autofocus: isActive,
                           keyboardType: TextInputType.name,
-                          cursorColor: Colors.black54,
+                          cursorColor: colorWhite,
                           decoration: InputDecoration(
-                              hintText: 'What you wanna say??',
+                              hintStyle: const TextStyle(
+                                  color: colorWhite,
+                                  fontWeight: FontWeight.w200),
+                              hintText:
+                                  '                      What you wanna say??',
+                              errorBorder: const OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(width: 3, color: colorRed),
+                              ),
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(5.0),
                                   borderSide: const BorderSide(
-                                      width: 3.0,
+                                      color: colorWhite,
+                                      width: 6.0,
                                       style: BorderStyle.solid,
                                       strokeAlign:
                                           BorderSide.strokeAlignInside))),
@@ -147,6 +155,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   children: [
                     Center(
                       child: IconButton(
+                        color: colorWhite,
                         onPressed: () {
                           setState(() {
                             _inputText();

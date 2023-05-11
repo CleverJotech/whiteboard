@@ -1,3 +1,5 @@
 import 'package:flutter/material.dart';
 
-const Color colorMaroon = Color.fromARGB(197, 116, 114, 114);
+const Color colorMaroon = Colors.black87;
+const Color colorWhite = Color.fromARGB(255, 255, 255, 255);
+const Color colorRed = Colors.redAccent;
