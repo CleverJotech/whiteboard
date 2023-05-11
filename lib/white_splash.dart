@@ -1,7 +1,7 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:whiteboard/main.dart';
+import 'main.dart';
 
 // class MyCustomWidget extends StatefulWidget {
 //   const MyCustomWidget({super.key});

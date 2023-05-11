@@ -1,10 +1,10 @@
 import 'dart:math';
 import 'dart:ui' as ui;
 import 'package:flutter/services.dart';
-import 'package:whiteboard/constants.dart';
+import 'constants.dart';
 import 'package:flutter/material.dart';
-import 'package:whiteboard/user_input.dart';
-import 'package:whiteboard/white_splash.dart';
+import 'user_input.dart';
+import 'white_splash.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,9 +18,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'WhiteBoard',
-      theme: ThemeData(canvasColor: colorWhite),
-      home: const MyHomePage(title: 'WhiteBoard'),
+      title: 'White Board',
+      theme: ThemeData(
+          canvasColor: colorWhite, scaffoldBackgroundColor: colorMaroon),
+      home: const WhiteSplash(),
     );
   }
 }
@@ -65,49 +66,63 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  userGivenText() {
+    if (_text != '') {
+      return SubmittedScreen(submittedText: _text);
+    } else {
+      return const SizedBox(
+        height: 300,
+        width: 400,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        title: Center(
-          child: Text(
-            widget.title,
-            style: const TextStyle(
-              color: Colors.white70,
-              fontWeight: FontWeight.w300,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Text(
+              widget.title,
+              style: const TextStyle(
+                color: Colors.white70,
+                fontWeight: FontWeight.w300,
+              ),
             ),
+            SizedBox(
+              width: screenSize.width / 10,
+            )
+          ],
+        ),
+        leading: Center(
+          child: IconButton(
+            onPressed: () {
+              setState(() {
+                _text = '';
+              });
+            },
+            icon: clearIcon,
           ),
         ),
         backgroundColor: colorMaroon,
       ),
       body: SingleChildScrollView(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Center(
-              child: Transform.rotate(
-                angle: -pi / 2,
-                child: SizedBox(
-                  width: screenSize.width / 5,
-                  height: screenSize.height / 1.34,
-                  child: ClipRect(
-                    child: BackdropFilter(
-                        filter: ui.ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-                        child: SubmittedScreen(submittedText: _text)
-                        //Text(
-                        //   _text,
-                        //   style: const TextStyle(
-                        //     fontWeight: FontWeight.w900,
-                        //     fontSize: 90.0,
-                        //     color: Colors.black54,
-                        //     letterSpacing: 3.0,
-                        //   ),
-                        // ),
-                        ),
+            Stack(
+              children: [
+                Center(
+                  child: Transform.rotate(
+                    angle: -pi / 2,
+                    child: userGivenText(),
                   ),
                 ),
-              ),
+              ],
             ),
             InkWell(
               onTap: () {
@@ -128,7 +143,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         SizedBox(
                           width: screenSize.width / 1.2,
                           child: TextField(
-                              maxLength: 100,
+                              style: const TextStyle(color: colorWhite),
+                              maxLength: 80,
                               maxLengthEnforcement:
                                   MaxLengthEnforcement.enforced,
                               controller: userText,
@@ -145,8 +161,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                   contentPadding: const EdgeInsets.symmetric(
                                       vertical: 10.0),
                                   enabledBorder: const OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        width: 1, color: colorMaroon),
+                                    borderSide:
+                                        BorderSide(width: 1, color: colorWhite),
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(5)),
                                   ),
@@ -164,7 +180,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                       borderRadius: BorderRadius.circular(3.0),
                                       borderSide: const BorderSide(
                                           color:
-                                              colorMaroon, // set the border color to white
+                                              colorWhite, // set the border color to white
                                           width: 2.0,
                                           style: BorderStyle.solid,
                                           strokeAlign:
@@ -179,11 +195,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       ],
                     ),
                     Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Center(
                           child: IconButton(
-                            color: colorMaroon,
+                            color: colorWhite,
                             onPressed: () {
                               setState(() {
                                 _inputText();
@@ -219,21 +235,37 @@ class SubmittedScreen extends StatefulWidget {
 class _SubmittedScreenState extends State<SubmittedScreen> {
   @override
   Widget build(BuildContext context) {
+    var screenSize = MediaQuery.of(context).size;
     return Center(
       child: SlideFadeTransition(
         curve: Curves.elasticInOut,
-        delayStart: const Duration(milliseconds: 1800),
-        animationDuration: const Duration(milliseconds: 5000),
+        delayStart: const Duration(milliseconds: 200),
+        animationDuration: const Duration(milliseconds: 800),
         offset: 1.0,
         direction: Direction.horizontal,
         child: Center(
-          child: Text(
-            widget.submittedText,
-            textScaleFactor: null,
-            style: const TextStyle(
-              fontWeight: FontWeight.w900,
-              color: Colors.black54,
-              letterSpacing: 3.0,
+          child: ClipRect(
+            clipper: null,
+            child: Container(
+              color: colorWhiteBlend,
+              width: screenSize.width / 1.00,
+              height: screenSize.height / 1.27,
+              child: BackdropFilter(
+                blendMode: BlendMode.srcOver,
+                filter: ui.ImageFilter.dilate(radiusX: 10.0, radiusY: 10.0),
+                child: Center(
+                  child: Text(
+                    widget.submittedText,
+                    textScaleFactor: null,
+                    style: const TextStyle(
+                      fontSize: 50.0,
+                      fontWeight: FontWeight.w900,
+                      color: colorWhite,
+                      letterSpacing: 3.0,
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
         ),
