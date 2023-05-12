@@ -5,8 +5,11 @@ import 'constants.dart';
 import 'package:flutter/material.dart';
 import 'user_input.dart';
 import 'white_splash.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   runApp(const MyApp());
 }
 
@@ -16,11 +19,12 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'White Board',
       theme: ThemeData(
-          canvasColor: colorWhite, scaffoldBackgroundColor: colorMaroon),
+          canvasColor: Colors.white, scaffoldBackgroundColor: Colors.black87),
       home: const WhiteSplash(),
     );
   }
@@ -38,13 +42,29 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   late TextEditingController userText;
   late String _text = '';
-  bool isActive = false;
+  bool isActive = true;
+  bool isDarkMode = false;
   FocusNode myFocus = FocusNode();
+
+  late Color colorMaroon;
+  late Color colorWhite;
+  late Color colorWhiteBlend;
+  late Color colorRed;
+  late Color colorBlue;
+  late Color colorNull;
 
   @override
   void initState() {
-    userText = TextEditingController();
     super.initState();
+    userText = TextEditingController();
+    _text = '';
+    colorMaroon = Colors.black;
+    colorWhite = const Color.fromARGB(255, 255, 255, 255);
+    colorWhiteBlend = const Color.fromARGB(230, 255, 255, 255);
+    colorRed = Colors.redAccent;
+    colorBlue = Colors.blueAccent;
+    colorNull = Colors.transparent;
+    userText = TextEditingController();
   }
 
   @override
@@ -66,65 +86,193 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  userGivenText() {
-    if (_text != '') {
-      return SubmittedScreen(submittedText: _text);
-    } else {
-      return const SizedBox(
-        height: 300,
-        width: 400,
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
-    return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Text(
-              widget.title,
-              style: const TextStyle(
-                color: Colors.white70,
-                fontWeight: FontWeight.w300,
+
+    setColorMode() {
+      setState(() {
+        if (isDarkMode == true) {
+          colorMaroon = Colors.black;
+          colorWhite = const Color.fromARGB(255, 255, 255, 255);
+          colorWhiteBlend = const Color.fromARGB(230, 255, 255, 255);
+          colorRed = Colors.redAccent;
+          colorBlue = Colors.blueAccent;
+          colorNull = Colors.transparent;
+        } else {
+          colorMaroon = const Color.fromARGB(255, 255, 255, 255);
+          colorWhite = const Color.fromARGB(255, 0, 0, 0);
+          colorWhiteBlend = Colors.black87;
+          colorRed = Colors.redAccent;
+          colorBlue = Colors.blueAccent;
+          colorNull = Colors.transparent;
+        }
+        isDarkMode = !isDarkMode;
+      });
+    }
+
+    userGivenText() {
+      if (_text != '') {
+        return Flexible(
+          flex: 2,
+          child: Center(
+            child: SlideFadeTransition(
+              curve: Curves.elasticInOut,
+              delayStart: const Duration(milliseconds: 200),
+              animationDuration: const Duration(milliseconds: 800),
+              offset: 1.0,
+              direction: Direction.horizontal,
+              child: Center(
+                child: ClipRect(
+                  clipper: null,
+                  child: Container(
+                    color: colorMaroon,
+                    width: 900.w,
+                    height: 380.h,
+                    child: BackdropFilter(
+                      blendMode: BlendMode.srcOver,
+                      filter:
+                          ui.ImageFilter.dilate(radiusX: 10.0, radiusY: 10.0),
+                      child: Center(
+                        child: Text(
+                          _text,
+                          textScaleFactor: null,
+                          style: TextStyle(
+                            fontSize: 50.0,
+                            fontWeight: FontWeight.w900,
+                            color: colorMaroon,
+                            letterSpacing: 3.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
-            SizedBox(
-              width: screenSize.width / 10,
-            )
-          ],
-        ),
-        leading: Center(
-          child: IconButton(
-            onPressed: () {
-              setState(() {
-                _text = '';
-              });
-            },
-            icon: clearIcon,
           ),
-        ),
-        backgroundColor: colorMaroon,
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Stack(
+        );
+      } else {
+        return Expanded(
+          child: SizedBox(
+            height: screenSize.height / 1.47,
+            width: screenSize.width / 1.2,
+          ),
+        );
+      }
+    }
+
+    return Scaffold(
+        appBar: AppBar(
+          backgroundColor: colorMaroon,
+          leadingWidth: screenSize.width / 5,
+          leading: Flexible(
+            flex: 10,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Center(
-                  child: Transform.rotate(
-                    angle: -pi / 2,
-                    child: userGivenText(),
-                  ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 25,
+                      height: 25,
+                      child: Expanded(
+                        child: IconButton(
+                          color: colorWhite,
+                          focusColor: colorNull,
+                          hoverColor: colorNull,
+                          splashColor: colorNull,
+                          highlightColor: colorNull,
+                          onPressed: () {
+                            setState(() {
+                              _text = '';
+                            });
+                          },
+                          icon: clearIcon,
+                        ),
+                      ),
+                    ),
+                    Divider(
+                      thickness: screenSize.width / 90,
+                      indent: 13,
+                      endIndent: 13,
+                      height: 13,
+                    ),
+                    // SizedBox(
+                    //   width: screenSize.width / 15,
+                    // ),
+                    Expanded(
+                      child: SizedBox(
+                        width: 25,
+                        height: 25,
+                        child: IconButton(
+                          focusColor: colorNull,
+                          hoverColor: colorNull,
+                          splashColor: colorNull,
+                          highlightColor: colorNull,
+                          onPressed: () {
+                            setState(() {
+                              //toggleTheme();
+                              //toggleMode();
+                              setColorMode();
+                            });
+                          },
+                          icon: Icon(
+                            Theme.of(context).brightness == Brightness.light
+                                ? Icons.light_mode_outlined // dark mode icon
+                                : Icons.dark_mode_rounded, // light mode icon
+                            color: colorWhite,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                PreferredSize(
+                  preferredSize: const Size.fromHeight(kToolbarHeight),
+                  child: Container(),
                 ),
               ],
             ),
-            InkWell(
+          ),
+          centerTitle: true,
+          title: Text(
+            widget.title,
+            style: TextStyle(
+              color: colorWhiteBlend,
+              fontWeight: FontWeight.w300,
+            ),
+          ),
+        ),
+        body: Center(
+          child: Container(
+            color: colorWhiteBlend,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Center(
+                      child: Transform.rotate(
+                        angle: -pi / 2,
+                        child: userGivenText(),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+        bottomSheet: Container(
+          color: colorMaroon,
+          child: Padding(
+            padding:
+                const EdgeInsets.only(bottom: 2, right: 12, left: 12, top: 12),
+            child: InkWell(
               onTap: () {
                 setState(() {});
               },
@@ -137,139 +285,95 @@ class _MyHomePageState extends State<MyHomePage> {
                     SizedBox(
                       width: screenSize.width / 50,
                     ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: screenSize.width / 1.2,
-                          child: TextField(
-                              style: const TextStyle(color: colorWhite),
-                              maxLength: 80,
-                              maxLengthEnforcement:
-                                  MaxLengthEnforcement.enforced,
-                              controller: userText,
-                              focusNode: myFocus,
-                              autofocus: isActive,
-                              keyboardType: TextInputType.name,
-                              cursorColor: colorWhite,
-                              decoration: InputDecoration(
-                                  hintStyle: const TextStyle(
-                                      color: colorWhite,
-                                      fontWeight: FontWeight.w200),
-                                  hintText:
-                                      '                      What you wanna say??',
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      vertical: 10.0),
-                                  enabledBorder: const OutlineInputBorder(
-                                    borderSide:
-                                        BorderSide(width: 1, color: colorWhite),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(5)),
-                                  ),
-                                  focusedBorder: const OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        width: 1.5, color: colorBlue),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(5)),
-                                  ),
-                                  errorBorder: const OutlineInputBorder(
-                                    borderSide:
-                                        BorderSide(width: 2, color: colorRed),
-                                  ),
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(3.0),
-                                      borderSide: const BorderSide(
-                                          color:
-                                              colorWhite, // set the border color to white
-                                          width: 2.0,
-                                          style: BorderStyle.solid,
-                                          strokeAlign:
-                                              BorderSide.strokeAlignInside))),
-                              onEditingComplete: () {
-                                _inputText();
-                                _doneWriting();
-                                userText.clear();
-                                FocusScope.of(context).unfocus();
-                              }),
-                        ),
-                      ],
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Center(
-                          child: IconButton(
-                            color: colorWhite,
-                            onPressed: () {
-                              setState(() {
-                                _inputText();
-                                userText.clear();
-                                FocusScope.of(context).unfocus();
-                              });
-                            },
-                            icon: const Icon(Icons.send_rounded),
+                    Flexible(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: screenSize.width / 1.2,
+                            child: TextField(
+                                style: TextStyle(color: colorWhite),
+                                maxLength: 80,
+                                maxLengthEnforcement:
+                                    MaxLengthEnforcement.enforced,
+                                controller: userText,
+                                focusNode: myFocus,
+                                autofocus: isActive,
+                                keyboardType: TextInputType.name,
+                                cursorColor: colorWhite,
+                                decoration: InputDecoration(
+                                    counterStyle: TextStyle(color: colorWhite),
+                                    hintStyle: TextStyle(
+                                        color: colorWhite,
+                                        fontWeight: FontWeight.w200),
+                                    hintText:
+                                        '                      What you wanna say??',
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        vertical: 10.0),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          width: 1, color: colorWhite),
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(5)),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          width: 1.5, color: colorBlue),
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(5)),
+                                    ),
+                                    errorBorder: OutlineInputBorder(
+                                      borderSide:
+                                          BorderSide(width: 2, color: colorRed),
+                                    ),
+                                    border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(3.0),
+                                        borderSide: BorderSide(
+                                            color:
+                                                colorWhite, // set the border color to white
+                                            width: 2.0,
+                                            style: BorderStyle.solid,
+                                            strokeAlign:
+                                                BorderSide.strokeAlignInside))),
+                                onEditingComplete: () {
+                                  _inputText();
+                                  _doneWriting();
+                                  userText.clear();
+                                  FocusScope.of(context).unfocus();
+                                }),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
+                    ),
+                    Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Center(
+                            child: IconButton(
+                              color: colorWhite,
+                              onPressed: () {
+                                setState(() {
+                                  _inputText();
+                                  userText.clear();
+                                  FocusScope.of(context).unfocus();
+                                });
+                              },
+                              icon: Icon(
+                                Icons.send_rounded,
+                                color: colorWhite,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     )
                   ],
                 ),
               ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class SubmittedScreen extends StatefulWidget {
-  final String submittedText;
-
-  const SubmittedScreen({super.key, required this.submittedText});
-
-  @override
-  State<SubmittedScreen> createState() => _SubmittedScreenState();
-}
-
-class _SubmittedScreenState extends State<SubmittedScreen> {
-  @override
-  Widget build(BuildContext context) {
-    var screenSize = MediaQuery.of(context).size;
-    return Center(
-      child: SlideFadeTransition(
-        curve: Curves.elasticInOut,
-        delayStart: const Duration(milliseconds: 200),
-        animationDuration: const Duration(milliseconds: 800),
-        offset: 1.0,
-        direction: Direction.horizontal,
-        child: Center(
-          child: ClipRect(
-            clipper: null,
-            child: Container(
-              color: colorWhiteBlend,
-              width: screenSize.width / 1.00,
-              height: screenSize.height / 1.27,
-              child: BackdropFilter(
-                blendMode: BlendMode.srcOver,
-                filter: ui.ImageFilter.dilate(radiusX: 10.0, radiusY: 10.0),
-                child: Center(
-                  child: Text(
-                    widget.submittedText,
-                    textScaleFactor: null,
-                    style: const TextStyle(
-                      fontSize: 50.0,
-                      fontWeight: FontWeight.w900,
-                      color: colorWhite,
-                      letterSpacing: 3.0,
-                    ),
-                  ),
-                ),
-              ),
-            ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 }
