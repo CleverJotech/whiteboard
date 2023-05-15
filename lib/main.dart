@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:in_app_review/in_app_review.dart';
+//import 'package:shared_preferences/shared_preferences.dart';
 import 'user_input.dart';
 import 'white_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -55,7 +57,9 @@ class _MyHomePageState extends State<MyHomePage> {
   TextSizes? selectedSize;
   late double boardTextSize;
   late int sheetTextLength;
-  late String TextView;
+  late String textView;
+  late final InAppReview appReview = InAppReview.instance;
+  //int _openCount = 0;
 
   late Color colorMaroon;
   late Color colorWhite;
@@ -78,8 +82,36 @@ class _MyHomePageState extends State<MyHomePage> {
     userText = TextEditingController();
     boardTextSize = ScreenUtil().setSp(50);
     sheetTextLength = 70;
-    TextView = '';
+    textView = '';
+    //_loadCounter();
   }
+
+  // Future<void> _loadCounter() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   setState(() {
+  //     if (_openCount < 40) {
+  //       _openCount = (prefs.getInt('openCount') ?? 0) + 1;
+  //     } else {
+  //       _openCount = 0;
+  //     }
+  //   });
+  //   await prefs.setInt('openCount', _openCount);
+  // }
+
+  // _reviewMyApp() async {
+  //   if (_openCount == 38) {
+  //     if (await appReview.isAvailable()) {
+  //       appReview.requestReview();
+  //       setState(() {
+  //         appReview.openStoreListing(appStoreId: 'com');
+  //       });
+  //     } else {
+  //       return null;
+  //     }
+  //   } else {
+  //     return null;
+  //   }
+  // }
 
   @override
   void dispose() {
@@ -131,43 +163,43 @@ class _MyHomePageState extends State<MyHomePage> {
           setState(() {
             boardTextSize = ScreenUtil().setSp(12);
             sheetTextLength = 100;
-            TextView = 'Preview Of Size 12';
+            textView = 'Preview Of Size 12';
           });
         } else if (selectedSize == TextSizes.twentyfour) {
           setState(() {
             boardTextSize = ScreenUtil().setSp(24);
             sheetTextLength = 90;
-            TextView = 'Preview Of Size 24';
+            textView = 'Preview Of Size 24';
           });
         } else if (selectedSize == TextSizes.thirtysix) {
           setState(() {
             boardTextSize = ScreenUtil().setSp(36);
             sheetTextLength = 80;
-            TextView = 'Preview Of Size 36';
+            textView = 'Preview Of Size 36';
           });
         } else if (selectedSize == TextSizes.fortyeight) {
           setState(() {
             boardTextSize = ScreenUtil().setSp(48);
             sheetTextLength = 70;
-            TextView = 'Preview Of Size 48';
+            textView = 'Preview Of Size 48';
           });
         } else if (selectedSize == TextSizes.sixty) {
           setState(() {
             boardTextSize = ScreenUtil().setSp(60);
             sheetTextLength = 40;
-            TextView = 'Preview Of Size 60';
+            textView = 'Preview Of Size 60';
           });
         } else if (selectedSize == TextSizes.seventytwo) {
           setState(() {
             boardTextSize = ScreenUtil().setSp(72);
             sheetTextLength = 30;
-            TextView = 'Preview Of Size 72';
+            textView = 'Preview Of Size 72';
           });
         } else {
           setState(() {
             boardTextSize = 50;
             sheetTextLength = 70;
-            TextView = '';
+            textView = '';
           });
         }
       });
@@ -317,7 +349,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         setState(() {
                           selectedSize = text;
                           setTextMode();
-                          _text = TextView;
+                          _text = textView;
+                          // _reviewMyApp();
                         });
                       },
                       child: Text(
