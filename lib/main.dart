@@ -393,16 +393,16 @@ class _MyHomePageState extends State<MyHomePage> {
                       },
                     ),
                   ),
-                  PopupMenuItem(
-                    value: SampleItem.itemTwo,
-                    child: Text(
-                      'About Us',
-                      style: TextStyle(
-                        color: colorMaroon,
-                        fontWeight: FontWeight.w300,
-                      ),
-                    ),
-                  ),
+                  // PopupMenuItem(
+                  //   value: SampleItem.itemTwo,
+                  //   child: Text(
+                  //     'About Us',
+                  //     style: TextStyle(
+                  //       color: colorMaroon,
+                  //       fontWeight: FontWeight.w300,
+                  //     ),
+                  //   ),
+                  // ),
                 ];
               },
               onSelected: (SampleItem item) {
