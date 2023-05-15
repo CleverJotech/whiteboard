@@ -1,11 +1,13 @@
 import 'dart:math';
-import 'dart:ui' as ui;
 import 'package:flutter/services.dart';
-import 'constants.dart';
 import 'package:flutter/material.dart';
 import 'user_input.dart';
 import 'white_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+enum SampleItem { itemOne, itemTwo }
+
+enum TextSizes { twelve, twentyfour, thirtysix, fortyeight, sixty, seventytwo }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,12 +21,16 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     ScreenUtil.init(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'White Board',
       theme: ThemeData(
-          canvasColor: Colors.white, scaffoldBackgroundColor: Colors.black87),
+        canvasColor: Colors.white,
+        scaffoldBackgroundColor: Colors.black87,
+        textTheme: theme.textTheme,
+      ),
       home: const WhiteSplash(),
     );
   }
@@ -45,6 +51,11 @@ class _MyHomePageState extends State<MyHomePage> {
   bool isActive = true;
   bool isDarkMode = false;
   FocusNode myFocus = FocusNode();
+  SampleItem? selectedMenu;
+  TextSizes? selectedSize;
+  late double boardTextSize;
+  late int sheetTextLength;
+  late String TextView;
 
   late Color colorMaroon;
   late Color colorWhite;
@@ -60,11 +71,14 @@ class _MyHomePageState extends State<MyHomePage> {
     _text = '';
     colorMaroon = Colors.black;
     colorWhite = const Color.fromARGB(255, 255, 255, 255);
-    colorWhiteBlend = const Color.fromARGB(230, 255, 255, 255);
+    colorWhiteBlend = const Color.fromARGB(200, 255, 255, 255);
     colorRed = Colors.redAccent;
     colorBlue = Colors.blueAccent;
     colorNull = Colors.transparent;
     userText = TextEditingController();
+    boardTextSize = ScreenUtil().setSp(50);
+    sheetTextLength = 70;
+    TextView = '';
   }
 
   @override
@@ -95,14 +109,14 @@ class _MyHomePageState extends State<MyHomePage> {
         if (isDarkMode == true) {
           colorMaroon = Colors.black;
           colorWhite = const Color.fromARGB(255, 255, 255, 255);
-          colorWhiteBlend = const Color.fromARGB(230, 255, 255, 255);
+          colorWhiteBlend = const Color.fromARGB(200, 255, 255, 255);
           colorRed = Colors.redAccent;
           colorBlue = Colors.blueAccent;
           colorNull = Colors.transparent;
         } else {
           colorMaroon = const Color.fromARGB(255, 255, 255, 255);
           colorWhite = const Color.fromARGB(255, 0, 0, 0);
-          colorWhiteBlend = Colors.black87;
+          colorWhiteBlend = Colors.black54;
           colorRed = Colors.redAccent;
           colorBlue = Colors.blueAccent;
           colorNull = Colors.transparent;
@@ -111,10 +125,58 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     }
 
+    setTextMode() {
+      setState(() {
+        if (selectedSize == TextSizes.twelve) {
+          setState(() {
+            boardTextSize = ScreenUtil().setSp(12);
+            sheetTextLength = 100;
+            TextView = 'Preview Of Size 12';
+          });
+        } else if (selectedSize == TextSizes.twentyfour) {
+          setState(() {
+            boardTextSize = ScreenUtil().setSp(24);
+            sheetTextLength = 90;
+            TextView = 'Preview Of Size 24';
+          });
+        } else if (selectedSize == TextSizes.thirtysix) {
+          setState(() {
+            boardTextSize = ScreenUtil().setSp(36);
+            sheetTextLength = 80;
+            TextView = 'Preview Of Size 36';
+          });
+        } else if (selectedSize == TextSizes.fortyeight) {
+          setState(() {
+            boardTextSize = ScreenUtil().setSp(48);
+            sheetTextLength = 70;
+            TextView = 'Preview Of Size 48';
+          });
+        } else if (selectedSize == TextSizes.sixty) {
+          setState(() {
+            boardTextSize = ScreenUtil().setSp(60);
+            sheetTextLength = 40;
+            TextView = 'Preview Of Size 60';
+          });
+        } else if (selectedSize == TextSizes.seventytwo) {
+          setState(() {
+            boardTextSize = ScreenUtil().setSp(72);
+            sheetTextLength = 30;
+            TextView = 'Preview Of Size 72';
+          });
+        } else {
+          setState(() {
+            boardTextSize = 50;
+            sheetTextLength = 70;
+            TextView = '';
+          });
+        }
+      });
+    }
+
     userGivenText() {
       if (_text != '') {
         return Flexible(
-          flex: 2,
+          flex: 1,
           child: Center(
             child: SlideFadeTransition(
               curve: Curves.elasticInOut,
@@ -122,28 +184,32 @@ class _MyHomePageState extends State<MyHomePage> {
               animationDuration: const Duration(milliseconds: 800),
               offset: 1.0,
               direction: Direction.horizontal,
-              child: Center(
-                child: ClipRect(
-                  clipper: null,
-                  child: Container(
-                    color: colorMaroon,
-                    width: 900.w,
-                    height: 380.h,
-                    child: BackdropFilter(
-                      blendMode: BlendMode.srcOver,
-                      filter:
-                          ui.ImageFilter.dilate(radiusX: 10.0, radiusY: 10.0),
-                      child: Center(
-                        child: Text(
-                          _text,
-                          textScaleFactor: null,
-                          style: TextStyle(
-                            fontSize: 50.0,
-                            fontWeight: FontWeight.w900,
-                            color: colorMaroon,
-                            letterSpacing: 3.0,
-                          ),
-                        ),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: colorMaroon,
+                  shape: BoxShape.rectangle,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: colorBlue,
+                      blurRadius: 5,
+                      blurStyle: BlurStyle.outer,
+                    ),
+                  ],
+                ),
+                width: 400.w,
+                height: 360.h,
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      _text,
+                      textScaleFactor: null,
+                      style: TextStyle(
+                        fontSize: boardTextSize,
+                        fontWeight: FontWeight.w900,
+                        color: colorWhite,
+                        letterSpacing: 3.0,
                       ),
                     ),
                   ),
@@ -155,8 +221,8 @@ class _MyHomePageState extends State<MyHomePage> {
       } else {
         return Expanded(
           child: SizedBox(
-            height: screenSize.height / 1.47,
-            width: screenSize.width / 1.2,
+            height: 300.h,
+            width: 200.w,
           ),
         );
       }
@@ -165,76 +231,62 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: colorMaroon,
-          leadingWidth: screenSize.width / 5,
-          leading: Flexible(
-            flex: 10,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 25,
-                      height: 25,
-                      child: Expanded(
-                        child: IconButton(
-                          color: colorWhite,
-                          focusColor: colorNull,
-                          hoverColor: colorNull,
-                          splashColor: colorNull,
-                          highlightColor: colorNull,
-                          onPressed: () {
-                            setState(() {
-                              _text = '';
-                            });
-                          },
-                          icon: clearIcon,
-                        ),
+          leading: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: IconButton(
+                      iconSize: 25.sp,
+                      focusColor: colorNull,
+                      hoverColor: colorNull,
+                      splashColor: colorNull,
+                      highlightColor: colorNull,
+                      onPressed: () {
+                        setState(() {
+                          _text = '';
+                        });
+                      },
+                      icon: Icon(
+                        Icons.cleaning_services_rounded,
+                        color: colorWhiteBlend,
                       ),
                     ),
-                    Divider(
-                      thickness: screenSize.width / 90,
-                      indent: 13,
-                      endIndent: 13,
-                      height: 13,
+                  ),
+                  Flexible(
+                    child: Divider(
+                      thickness: 90.h,
+                      indent: 13.h,
+                      endIndent: 13.w,
+                      height: 13.h,
                     ),
-                    // SizedBox(
-                    //   width: screenSize.width / 15,
-                    // ),
-                    Expanded(
-                      child: SizedBox(
-                        width: 25,
-                        height: 25,
-                        child: IconButton(
-                          focusColor: colorNull,
-                          hoverColor: colorNull,
-                          splashColor: colorNull,
-                          highlightColor: colorNull,
-                          onPressed: () {
-                            setState(() {
-                              //toggleTheme();
-                              //toggleMode();
-                              setColorMode();
-                            });
-                          },
-                          icon: Icon(
-                            Theme.of(context).brightness == Brightness.light
-                                ? Icons.light_mode_outlined // dark mode icon
-                                : Icons.dark_mode_rounded, // light mode icon
-                            color: colorWhite,
-                          ),
-                        ),
+                  ),
+                  Expanded(
+                    child: IconButton(
+                      iconSize: 25.sp,
+                      focusColor: colorNull,
+                      hoverColor: colorNull,
+                      splashColor: colorNull,
+                      highlightColor: colorNull,
+                      onPressed: () {
+                        setState(() {
+                          setColorMode();
+                        });
+                      },
+                      icon: Icon(
+                        isDarkMode == false
+                            ? Icons.light_mode_outlined
+                            : Icons.dark_mode_rounded,
+                        color: colorWhiteBlend,
                       ),
                     ),
-                  ],
-                ),
-                PreferredSize(
-                  preferredSize: const Size.fromHeight(kToolbarHeight),
-                  child: Container(),
-                ),
-              ],
-            ),
+                  ),
+                ],
+              ),
+            ],
           ),
           centerTitle: true,
           title: Text(
@@ -244,26 +296,131 @@ class _MyHomePageState extends State<MyHomePage> {
               fontWeight: FontWeight.w300,
             ),
           ),
-        ),
-        body: Center(
-          child: Container(
-            color: colorWhiteBlend,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Center(
-                      child: Transform.rotate(
-                        angle: -pi / 2,
-                        child: userGivenText(),
+          actions: [
+            PopupMenuButton(
+              splashRadius: 15,
+              initialValue: selectedMenu,
+              elevation: 8,
+              shadowColor: colorBlue,
+              color: colorWhiteBlend,
+              icon: Icon(
+                Icons.more_vert,
+                color: colorWhiteBlend,
+              ),
+              itemBuilder: (BuildContext context) {
+                return <PopupMenuEntry<SampleItem>>[
+                  PopupMenuItem(
+                    value: SampleItem.itemOne,
+                    child: PopupMenuButton(
+                      initialValue: selectedSize,
+                      onSelected: (TextSizes text) {
+                        setState(() {
+                          selectedSize = text;
+                          setTextMode();
+                          _text = TextView;
+                        });
+                      },
+                      child: Text(
+                        "Board's Text Size",
+                        style: TextStyle(
+                          color: colorMaroon,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                      itemBuilder: (BuildContext context) {
+                        return <PopupMenuEntry<TextSizes>>[
+                          PopupMenuItem(
+                            value: TextSizes.twelve,
+                            child: Text(
+                              '12',
+                              style: TextStyle(
+                                color: colorMaroon,
+                                fontWeight: FontWeight.w300,
+                              ),
+                            ),
+                          ),
+                          PopupMenuItem(
+                            value: TextSizes.twentyfour,
+                            child: Text(
+                              '24',
+                              style: TextStyle(
+                                color: colorMaroon,
+                                fontWeight: FontWeight.w300,
+                              ),
+                            ),
+                          ),
+                          PopupMenuItem(
+                            value: TextSizes.thirtysix,
+                            child: Text(
+                              '36',
+                              style: TextStyle(
+                                color: colorMaroon,
+                                fontWeight: FontWeight.w300,
+                              ),
+                            ),
+                          ),
+                          PopupMenuItem(
+                            value: TextSizes.fortyeight,
+                            child: Text(
+                              '48',
+                              style: TextStyle(
+                                color: colorMaroon,
+                                fontWeight: FontWeight.w300,
+                              ),
+                            ),
+                          ),
+                          PopupMenuItem(
+                            value: TextSizes.sixty,
+                            child: Text(
+                              '60',
+                              style: TextStyle(
+                                color: colorMaroon,
+                                fontWeight: FontWeight.w300,
+                              ),
+                            ),
+                          ),
+                          PopupMenuItem(
+                            value: TextSizes.seventytwo,
+                            child: Text(
+                              '72',
+                              style: TextStyle(
+                                color: colorMaroon,
+                                fontWeight: FontWeight.w300,
+                              ),
+                            ),
+                          ),
+                        ];
+                      },
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: SampleItem.itemTwo,
+                    child: Text(
+                      'About Us',
+                      style: TextStyle(
+                        color: colorMaroon,
+                        fontWeight: FontWeight.w300,
                       ),
                     ),
-                  ],
-                ),
-              ],
+                  ),
+                ];
+              },
+              onSelected: (SampleItem item) {
+                setState(() {
+                  selectedMenu = item;
+                });
+              },
+            ),
+          ],
+        ),
+        body: Container(
+          width: 400.w,
+          height: 513.h,
+          color: colorWhiteBlend,
+          child: Center(
+            child: Transform.rotate(
+              angle: -pi / 2,
+              child: userGivenText(),
             ),
           ),
         ),
@@ -292,8 +449,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           SizedBox(
                             width: screenSize.width / 1.2,
                             child: TextField(
-                                style: TextStyle(color: colorWhite),
-                                maxLength: 80,
+                                style: TextStyle(color: colorWhiteBlend),
+                                maxLength: sheetTextLength,
                                 maxLengthEnforcement:
                                     MaxLengthEnforcement.enforced,
                                 controller: userText,
@@ -302,9 +459,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                 keyboardType: TextInputType.name,
                                 cursorColor: colorWhite,
                                 decoration: InputDecoration(
-                                    counterStyle: TextStyle(color: colorWhite),
+                                    counterStyle:
+                                        TextStyle(color: colorWhiteBlend),
                                     hintStyle: TextStyle(
-                                        color: colorWhite,
+                                        color: colorWhiteBlend,
                                         fontWeight: FontWeight.w200),
                                     hintText:
                                         '                      What you wanna say??',
@@ -312,7 +470,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                         vertical: 10.0),
                                     enabledBorder: OutlineInputBorder(
                                       borderSide: BorderSide(
-                                          width: 1, color: colorWhite),
+                                          width: 1, color: colorWhiteBlend),
                                       borderRadius: const BorderRadius.all(
                                           Radius.circular(5)),
                                     ),
@@ -330,8 +488,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                         borderRadius:
                                             BorderRadius.circular(3.0),
                                         borderSide: BorderSide(
-                                            color:
-                                                colorWhite, // set the border color to white
+                                            color: colorWhiteBlend,
                                             width: 2.0,
                                             style: BorderStyle.solid,
                                             strokeAlign:
@@ -352,7 +509,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         children: [
                           Center(
                             child: IconButton(
-                              color: colorWhite,
+                              color: colorWhiteBlend,
                               onPressed: () {
                                 setState(() {
                                   _inputText();
@@ -362,7 +519,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               },
                               icon: Icon(
                                 Icons.send_rounded,
-                                color: colorWhite,
+                                color: colorWhiteBlend,
                               ),
                             ),
                           ),
