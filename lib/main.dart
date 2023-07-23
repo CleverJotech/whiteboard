@@ -263,15 +263,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: colorMaroon,
-          leading: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: IconButton(
+          leading:  IconButton(
                       iconSize: 25.sp,
                       focusColor: colorNull,
                       hoverColor: colorNull,
@@ -287,17 +279,16 @@ class _MyHomePageState extends State<MyHomePage> {
                         color: colorWhiteBlend,
                       ),
                     ),
-                  ),
-                  Flexible(
-                    child: Divider(
-                      thickness: 90.h,
-                      indent: 13.h,
-                      endIndent: 13.w,
-                      height: 13.h,
-                    ),
-                  ),
-                  Expanded(
-                    child: IconButton(
+          centerTitle: true,
+          title: Text(
+            widget.title,
+            style: TextStyle(
+              color: colorWhiteBlend,
+              fontWeight: FontWeight.w300,
+            ),
+          ),
+          actions: [
+            IconButton(
                       iconSize: 25.sp,
                       focusColor: colorNull,
                       hoverColor: colorNull,
@@ -315,20 +306,6 @@ class _MyHomePageState extends State<MyHomePage> {
                         color: colorWhiteBlend,
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          centerTitle: true,
-          title: Text(
-            widget.title,
-            style: TextStyle(
-              color: colorWhiteBlend,
-              fontWeight: FontWeight.w300,
-            ),
-          ),
-          actions: [
             PopupMenuButton(
               splashRadius: 15,
               initialValue: selectedMenu,
